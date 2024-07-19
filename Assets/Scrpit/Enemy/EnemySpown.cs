@@ -10,8 +10,21 @@ public class EnemySpown : MonoBehaviour
     [Header("Range Min&Max")]
     [Tooltip("время задержки спавна: 0 - min, 1 -max")]
     [SerializeField] private List<float> rangeTimeSponw;
-    [Tooltip("количество врагов: 0 - min, 1 -max")]
-    [SerializeField] private List<int> rangeCountSponw;
+
+    private int _currentCount;
+
+    private void OnEnable()
+    {
+        EventSystem.DeadEnemy += UpdateKillCount;
+        EventSystem.DeadPlayer += StopAllCoroutines;
+    }
+
+    private void OnDisable()
+    {
+        EventSystem.DeadEnemy -= UpdateKillCount;
+        EventSystem.DeadPlayer -= StopAllCoroutines;
+
+    }
 
     private void Start ()
     {
@@ -36,20 +49,22 @@ public class EnemySpown : MonoBehaviour
 
     }
 
+    private void UpdateKillCount()
+    {
+        _currentCount++;
+    }
+
     IEnumerator Spawn()
     {
-        int maxCountEnemy = Random.Range(rangeCountSponw[0], rangeCountSponw[1]);
-        int currentCountEnemy = 0;
-
-        while(currentCountEnemy < maxCountEnemy)
+       
+        while(_currentCount < KillCounter.CountToKill)
         {
             var randomRangeSpownDelay = Random.Range(rangeTimeSponw[0], rangeTimeSponw[1]);
 
             yield return new WaitForSeconds(randomRangeSpownDelay);
             RandomEnemy();
-            currentCountEnemy++;
         }
-
+        EventSystem.WinPlayer?.Invoke();
         StopAllCoroutines();
 
     }

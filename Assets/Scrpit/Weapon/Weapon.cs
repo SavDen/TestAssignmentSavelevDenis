@@ -14,6 +14,15 @@ public class Weapon : MonoBehaviour
     private float _privateDelayFire;
     private bool _fire;
 
+    private void OnEnable()
+    {
+        EventSystem.WinPlayer += ClearListEnemy;
+    }
+
+    private void OnDisable()
+    {
+        EventSystem.WinPlayer -= ClearListEnemy;
+    }
     private void Awake()
     {
         _privateDelayFire = _delayFire;
@@ -98,6 +107,11 @@ public class Weapon : MonoBehaviour
             }
         }
 
+    }
+
+    private void ClearListEnemy()
+    {
+        _enemy.Clear();
     }
 
     private void RotateToEnemy(int nearEnemy)

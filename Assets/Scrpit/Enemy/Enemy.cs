@@ -17,12 +17,14 @@ public abstract class Enemy : MonoBehaviour
 
     private void OnEnable()
     {
-        EventSystem.DamageEnemy += TakeDamage;
+        EventSystem.DeadPlayer += Dead;
+        EventSystem.WinPlayer += Dead;
     }
 
     private void OnDisable()
     {
-        EventSystem.DamageEnemy -= TakeDamage;
+        EventSystem.DeadPlayer -= Dead;
+        EventSystem.WinPlayer -= Dead;
     }
 
     private void Awake()
@@ -50,20 +52,28 @@ public abstract class Enemy : MonoBehaviour
         _rigidbody2D.velocity = Vector2.down * _speed;
     }
 
-    private void TakeDamage(int damage)
+    public void TakeDamage(int damage)
     {
         _healt -= damage;
 
         if (_healt <= 0)
         {
-            Destroy(gameObject);
+            EventSystem.DeadEnemy?.Invoke();
+            Dead();
         }
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if(!collision.transform.TryGetComponent<Bullet>(out Bullet bullet))
         {
-            Destroy(gameObject);
+            EventSystem.DamagePlayer?.Invoke();
+            Dead();
         }
     }
+
+    private void Dead()
+    {
+        Destroy(gameObject);
+    }
+
 }
