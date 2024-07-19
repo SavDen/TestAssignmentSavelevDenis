@@ -5,11 +5,12 @@ using UnityEngine;
 [RequireComponent(typeof (Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
 
-public class Player : MonoBehaviour
+public class Move : MonoBehaviour
 {
     [SerializeField] private float _speed;
     private Vector2 input;
     private Rigidbody2D rigidbody2D;
+
 
     private void Awake()
     {
@@ -20,8 +21,6 @@ public class Player : MonoBehaviour
     {
         input.x = Input.GetAxis("Horizontal");
         input.y = Input.GetAxis("Vertical");
-
-        
     }
 
     private void FixedUpdate()
